@@ -108,6 +108,7 @@
         .attr("height", "100%");
 
       function main(data) {
+        //fill arrays with only certain species
         let = Adelie = [];
         let = Gentoo = [];
         let = Other = [];
@@ -122,7 +123,7 @@
             Gentoo.push(+d.culmen_length_mm);
             return +d.culmen_length_mm;
           } else if (d.species != "Adelie" && d.species != "Gentoo") {
-            //// fetch Others
+            // fetch Others
             Other.push(+d.culmen_length_mm);
             return +d.culmen_length_mm;
           }
@@ -134,17 +135,12 @@
         let flipper_length_mm = d3.map(data, function (d) {
           return +d.flipper_length_mm;
         });
-        let species = d3.map(data, function (d) {
-          return d.species;
-        });
 
         //Set islands
 
         let islands = d3.map(data, function (d) {
           return d.island;
         });
-
-        let species_types = new Set(species);
 
         //Set island types
         let island_types = new Set(islands);
@@ -201,7 +197,7 @@
         bar_plot(culmen_depth_mm, 10, "topGentoo");
         h_bar_plot(Gentoo, 10, "rightGentoo");
 
-        //Other join Plot
+        //Others join Plot
         scatter_plot(
           culmen_depth_mm,
           Other,
