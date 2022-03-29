@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Joint Plots</title>
+
+    <script src="scatter_plot.js?2"></script>
+    <script src="bar_plot.js?2"></script>
+
+    <link rel="stylesheet" href="../styles/style.css" />
+    <style>
+      .fig {
+        fill: #faf8f8;
+      }
+      table {
+        border: 1px solid #d2bcbc;
+        border-collapse: collapse;
+        width: 60vw;
+      }
+      td {
+        border: 1px solid #d2bcbc;
+        border-collapse: collapse;
+        padding: 10px;
+        width: 10vw;
+      }
+    </style>
+    <script src="../lib/d3.js"></script>
+  </head>
+  <body>
+    <!-- https://seaborn.pydata.org/generated/seaborn.jointplot.html -->
+    <!--palmer_penguin_species: https://raw.githubusercontent.com/datavizpyr/data/master/palmer_penguin_species.tsv -->
+    <table>
+      <tr>
+        <td><svg width="500px" height="150px" id="topAdelie"></svg></td>
+        <td width="10%">&nbsp</td>
+      </tr>
+      <tr>
+        <td>
+          <svg
+            width="500px"
+            height="500px"
+            viewBox="0 0 1000 1000"
+            id="Adelie"
+          ></svg>
+        </td>
+        <td><svg width="150px" height="500px" id="rightAdelie"></svg></td>
+      </tr>
+      <tr>
+        <td><svg width="500px" height="150px" id="topGentoo"></svg></td>
+        <td width="10%">&nbsp</td>
+      </tr>
+      <tr>
+        <td>
+          <svg
+            width="500px"
+            height="500px"
+            viewBox="0 0 1000 1000"
+            id="Gentoo"
+          ></svg>
+        </td>
+        <td><svg width="150px" height="500px" id="rightGentoo"></svg></td>
+      </tr>
+      <tr>
+        <td><svg width="500px" height="150px" id="topOther"></svg></td>
+        <td width="10%">&nbsp</td>
+      </tr>
+      <tr>
+        <td>
+          <svg
+            width="500px"
+            height="500px"
+            viewBox="0 0 1000 1000"
+            id="Other"
+          ></svg>
+        </td>
+        <td><svg width="150px" height="500px" id="rightOther"></svg></td>
+      </tr>
+    </table>
+
+    <script>
+      let palmer_penguin_species = "../data/palmer_penguin_species.tsv";
+      // loading data
+      d3.tsv(palmer_penguin_species).then(main);
+
+      // Subplots
+      let fig_main = d3
+        .select("#main")
+        .append("g")
+        .append("rect")
+        .attr("class", "fig")
+        .attr("width", "100%")
+        .attr("height", "100%");
+      // top svg
+      let fig_top = d3
+        .select("#top")
+        .append("g")
+        .append("rect")
+        .attr("class", "fig")
+        .attr("width", "100%")
+        .attr("height", "100%");
+      // right svg
+      let fig_right = d3
+        .select("#right")
+        .append("g")
+        .append("rect")
+        .attr("class", "fig")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      function main(data) {
+        let = Adelie = [];
+        let = Gentoo = [];
+        let = Other = [];
+
+        let culmen_length_mm = d3.map(data, function (d) {
+          if (d.species == "Adelie") {
+            // fetch Adelie
+            Adelie.push(+d.culmen_length_mm);
+            return +d.culmen_length_mm;
+          } else if (d.species == "Gentoo") {
+            // fetch Gentoo
+            Gentoo.push(+d.culmen_length_mm);
+            return +d.culmen_length_mm;
+          } else if (d.species != "Adelie" && d.species != "Gentoo") {
+            //// fetch Others
+            Other.push(+d.culmen_length_mm);
+            return +d.culmen_length_mm;
+          }
+        });
+
+        let culmen_depth_mm = d3.map(data, function (d) {
+          return +d.culmen_depth_mm;
+        });
+        let flipper_length_mm = d3.map(data, function (d) {
+          return +d.flipper_length_mm;
+        });
+        let species = d3.map(data, function (d) {
+          return d.species;
+        });
+
+        //Set islands
+
+        let islands = d3.map(data, function (d) {
+          return d.island;
+        });
+
+        let species_types = new Set(species);
+
+        //Set island types
+        let island_types = new Set(islands);
+
+        let species_code = d3.map(data, function (d) {
+          species = d.species;
+          if (species === "Adelie") {
+            return 0;
+          } else if (species === "Gentoo") {
+            return 1;
+          } else {
+            return 2;
+          }
+        });
+
+        //set island code
+
+        let islands_code = d3.map(data, function (d) {
+          islands = d.island;
+          if (islands === "Torgersen") {
+            return 0;
+          } else if (species === "Biscoe") {
+            return 1;
+          } else {
+            return 2;
+          }
+        });
+
+        // Adelie Joint Plot
+        scatter_plot(
+          culmen_depth_mm,
+          Adelie,
+          islands_code,
+          "Adelie",
+          (title = "Adelie Penguin Species"),
+          (xLabel = "culmen_depth_mm"),
+          (yLabel = "culmen_length_mm")
+        );
+        //#############
+        bar_plot(culmen_depth_mm, 10, "topAdelie");
+        h_bar_plot(Adelie, 10, "rightAdelie");
+
+        //Gentoo joint Plot
+        scatter_plot(
+          culmen_depth_mm,
+          Gentoo,
+          islands_code,
+          "Gentoo",
+          (title = "Gentoo Penguin Species"),
+          (xLabel = "culmen_depth_mm"),
+          (yLabel = "culmen_length_mm")
+        );
+        //#############
+        bar_plot(culmen_depth_mm, 10, "topGentoo");
+        h_bar_plot(Gentoo, 10, "rightGentoo");
+
+        //Other join Plot
+        scatter_plot(
+          culmen_depth_mm,
+          Other,
+          islands_code,
+          "Other",
+          (title = "Other Penguin Species"),
+          (xLabel = "culmen_depth_mm"),
+          (yLabel = "culmen_length_mm")
+        );
+        //#############
+        bar_plot(culmen_depth_mm, 10, "topOther");
+        h_bar_plot(Other, 10, "rightOther");
+      }
+    </script>
+  </body>
+</html>
