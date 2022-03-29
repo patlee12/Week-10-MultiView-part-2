@@ -32,6 +32,7 @@ function scatter_plot(
     .enter()
     .append("g")
     .attr("transform", function (d, i) {
+      //Remove undefined values
       if (X[i] != undefined && Y[i] != undefined) {
         return `translate(${xScale(X[i])}, ${yScale(Y[i])})`;
       }
