@@ -43,6 +43,7 @@ function scatter_plot(
       return d;
     })
     .style("fill", function (d, i) {
+      console.log(colorScale(ColorData[i]));
       return colorScale(ColorData[i]);
     });
   // x and y Axis function
